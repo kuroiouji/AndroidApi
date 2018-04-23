@@ -57,7 +57,6 @@ public class SpStatusAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = mInflater.inflate(R.layout.spinner_list, parent, false);
             holder.name = (TextView) convertView.findViewById(R.id.name);
-            holder.id = (TextView) convertView.findViewById(R.id.ID);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
@@ -65,7 +64,6 @@ public class SpStatusAdapter extends BaseAdapter {
         holder.name.setText(mData.get(position).getStName());
         holder.name.setTextColor(Color.parseColor(mData.get(position).getStColor()));
         String str = mData.get(position).getStId()+"/"+mId+"/"+mType;
-        holder.id.setText(str);
         convertView.setTag(holder);
 
         return convertView;
@@ -73,6 +71,5 @@ public class SpStatusAdapter extends BaseAdapter {
 
     public class ViewHolder {
         TextView name;
-        TextView id;
     }
 }

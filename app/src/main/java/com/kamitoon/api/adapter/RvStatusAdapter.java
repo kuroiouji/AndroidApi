@@ -59,6 +59,15 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
         if (statusDaos.size() > 0){
             SpStatusAdapter adapter = new SpStatusAdapter(mContext,statusDaos,projectDaos.get(position).getPjId(),projectDaos.get(position).getType());
             holder.spinner.setAdapter(adapter);
+            int ps = 0;
+            for(StatusDao st : statusDaos){
+                if(st.getStId().equals(projectDaos.get(position).getPjStId())){
+                    holder.spinner.setSelection(ps);
+                    break;
+                }
+                ps++;
+            }
+
         }
 
     }
