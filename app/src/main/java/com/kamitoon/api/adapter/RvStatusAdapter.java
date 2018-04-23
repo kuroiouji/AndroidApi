@@ -67,7 +67,7 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
             int ps = 0;
             for (StatusDao st : statusDaos) {
                 if (st.getStId().equals(projectDaos.get(position).getPjStId())) {
-//                    holder.spinner.setSelection(ps);
+                    holder.spinner.setSelection(ps);
                     break;
                 }
                 ps++;
