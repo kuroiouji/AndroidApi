@@ -9,8 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kamitoon.api.MainActivity;
 import com.kamitoon.api.R;
@@ -28,6 +30,8 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
     private List<ProjectDao> projectDaos;
     private List<StatusDao> statusDaos;
     private Context mContext;
+    String pjId;
+    String type;
 
     public RvStatusAdapter(List<ProjectDao> projectDaos, List<StatusDao> statusDaos, Context mContext) {
         this.projectDaos = projectDaos;
@@ -39,7 +43,7 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
     @Override
     public RvStatusAdapter.ProjectDaoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.from(parent.getContext()).inflate(R.layout.row_list,parent,false);
+        View view = inflater.from(parent.getContext()).inflate(R.layout.row_list, parent, false);
         ProjectDaoViewHolder projectDaoViewHolder = new ProjectDaoViewHolder(view);
         return projectDaoViewHolder;
 
@@ -50,24 +54,35 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
         holder.pj_name.setText(projectDaos.get(position).getPjName());
         holder.pj_code.setText(projectDaos.get(position).getPjCode());
         holder.pj_budget.setText(projectDaos.get(position).getPjSpend() + " บาท");
-        if(projectDaos.get(position).getType().equals("project")) {
+        if (projectDaos.get(position).getType().equals("project")) {
             holder.cardView.setCardBackgroundColor(Color.parseColor("#ffffff"));
-        }else if(projectDaos.get(position).getType().equals("activity")) {
+        } else if (projectDaos.get(position).getType().equals("activity")) {
             holder.cardView.setCardBackgroundColor(Color.parseColor("#d9d9d9"));
         }
-
-        if (statusDaos.size() > 0){
-            SpStatusAdapter adapter = new SpStatusAdapter(mContext,statusDaos,projectDaos.get(position).getPjId(),projectDaos.get(position).getType());
+        pjId = projectDaos.get(position).getPjId();
+        type = projectDaos.get(position).getType();
+        if (statusDaos.size() > 0) {
+            SpStatusAdapter adapter = new SpStatusAdapter(mContext, statusDaos, pjId, type);
             holder.spinner.setAdapter(adapter);
             int ps = 0;
-            for(StatusDao st : statusDaos){
-                if(st.getStId().equals(projectDaos.get(position).getPjStId())){
-                    holder.spinner.setSelection(ps);
+            for (StatusDao st : statusDaos) {
+                if (st.getStId().equals(projectDaos.get(position).getPjStId())) {
+//                    holder.spinner.setSelection(ps);
                     break;
                 }
                 ps++;
             }
+            holder.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    Log.d("tg", "onItemSelected: " + position + " " + pjId + " " + type);
+                }
 
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
         }
 
     }
@@ -86,10 +101,10 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
 
         public ProjectDaoViewHolder(View itemView) {
             super(itemView);
-            cardView = (CardView)itemView.findViewById(R.id.card);
-            pj_name = (TextView)itemView.findViewById(R.id.pj_name);
-            pj_code = (TextView)itemView.findViewById(R.id.pj_code);
-            pj_budget = (TextView)itemView.findViewById(R.id.pj_budget);
+            cardView = (CardView) itemView.findViewById(R.id.card);
+            pj_name = (TextView) itemView.findViewById(R.id.pj_name);
+            pj_code = (TextView) itemView.findViewById(R.id.pj_code);
+            pj_budget = (TextView) itemView.findViewById(R.id.pj_budget);
             spinner = (Spinner) itemView.findViewById(R.id.pj_status);
         }
     }
