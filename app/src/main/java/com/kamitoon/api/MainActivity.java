@@ -2,11 +2,13 @@ package com.kamitoon.api;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.kamitoon.api.model.StudentDao;
+import com.kamitoon.api.adapter.RvStatusAdapter;
+import com.kamitoon.api.model.ProjectDao;
+import com.kamitoon.api.model.StatusDao;
 import com.kamitoon.api.service.HttpManager;
 
 import java.io.IOException;
@@ -17,31 +19,37 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+    RecyclerView recyclerView;
+    List<StatusDao> status;
 
-    TextView txt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        txt = findViewById(R.id.txt);
-        
+
+        recyclerView = findViewById(R.id.recyclerview_list);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(manager);
+        getSt();
         service();
     }
 
     public void service() {
-        /*Call<List<StudentDao>> call = HttpManager.getInstance().getService().getStudent();
+        Call<List<ProjectDao>> call = HttpManager.getInstance().getService().getProjectByYear(5);
         Log.d("service", "GG ");
-        call.enqueue(new Callback<List<StudentDao>>() {
+        call.enqueue(new Callback<List<ProjectDao>>() {
             @Override
-            public void onResponse(Call<List<StudentDao>> call, Response<List<StudentDao>> response) {
-                if(response.isSuccessful()){
-                    List<StudentDao> res = response.body();
+            public void onResponse(Call<List<ProjectDao>> call, Response<List<ProjectDao>> response) {
+                if (response.isSuccessful()) {
+                    List<ProjectDao> res = response.body();
                     Log.d("service", "if :: " + response.message());
-                    for(StudentDao row : res) {
-                        Log.d("service", row.getFname());
+                    RvStatusAdapter adapter = new RvStatusAdapter(res, status, getApplicationContext());
+                    recyclerView.setAdapter(adapter);
+                    for (ProjectDao row : res) {
+                        Log.d("service", row.getPjName());
                     }
-                }else{
+                } else {
                     try {
                         Log.d("service", "else :: " + response.errorBody().string());
                     } catch (IOException e) {
@@ -51,9 +59,36 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<StudentDao>> call, Throwable t) {
-                Log.d("service", "onFailure: " + t);
+            public void onFailure(Call<List<ProjectDao>> call, Throwable t) {
+                Log.d("service", "else :: " + t);
             }
-        });*/
+        });
+    }
+
+    public void getSt() {
+
+        Call<List<StatusDao>> call = HttpManager.getInstance().getService().getStatus();
+        call.enqueue(new Callback<List<StatusDao>>() {
+            @Override
+            public void onResponse(Call<List<StatusDao>> call, Response<List<StatusDao>> response) {
+                if (response.isSuccessful()) {
+                    List<StatusDao> res = response.body();
+                    Log.d("service", "if :: " + response.message());
+                    status = res;
+
+                } else {
+                    try {
+                        Log.d("service", "else :: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<StatusDao>> call, Throwable t) {
+                Log.d("service", "else :: " + t);
+            }
+        });
     }
 }
