@@ -1,8 +1,11 @@
 package com.kamitoon.api.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,14 +49,11 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
     public void onBindViewHolder(@NonNull RvStatusAdapter.ProjectDaoViewHolder holder, int position) {
         holder.pj_name.setText(projectDaos.get(position).getPjName());
         holder.pj_code.setText(projectDaos.get(position).getPjCode());
-        holder.pj_budget.setText(projectDaos.get(position).getPjSpend());
-
-        if(projectDaos.get(position).getActivity().size() > 0){
-            for(ActivityDao ac : projectDaos.get(position).getActivity()){
-                holder.pj_name.setText(ac.getAcName());
-                holder.pj_code.setText(ac.getAcCode());
-                holder.pj_budget.setText(ac.getAcSpend());
-            }
+        holder.pj_budget.setText(projectDaos.get(position).getPjSpend() + " บาท");
+        if(projectDaos.get(position).getType().equals("project")) {
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#ffffff"));
+        }else if(projectDaos.get(position).getType().equals("activity")) {
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#d9d9d9"));
         }
 
         if (statusDaos.size() > 0){
@@ -73,9 +73,11 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
         TextView pj_code;
         TextView pj_budget;
         Spinner spinner;
+        CardView cardView;
 
         public ProjectDaoViewHolder(View itemView) {
             super(itemView);
+            cardView = (CardView)itemView.findViewById(R.id.card);
             pj_name = (TextView)itemView.findViewById(R.id.pj_name);
             pj_code = (TextView)itemView.findViewById(R.id.pj_code);
             pj_budget = (TextView)itemView.findViewById(R.id.pj_budget);

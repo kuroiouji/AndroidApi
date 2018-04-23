@@ -30,9 +30,6 @@ public class ProjectDao {
     @SerializedName("pjSpend")
     private String pjSpend;
 
-    @SerializedName("activity")
-    private List<ActivityDao> activity;
-
     public String getPjId() {
         return pjId;
     }
@@ -97,11 +94,4 @@ public class ProjectDao {
         this.pjSpend = pjSpend;
     }
 
-    public List<ActivityDao> getActivity() {
-        return activity;
-    }
-
-    public void setActivity(List<ActivityDao> activity) {
-        this.activity = activity;
-    }
 }

@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void service() {
-        Call<List<ProjectDao>> call = HttpManager.getInstance().getService().getProjectByYear(5);
+        Call<List<ProjectDao>> call = HttpManager.getInstance().getService().getProjectByYear(4);
         Log.d("service", "GG ");
         call.enqueue(new Callback<List<ProjectDao>>() {
             @Override
