@@ -81,6 +81,7 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if(!statusDaos.get(position).getStId().equals(stId)) {
                         Log.d("tg", "onItemSelected: " + position + " " + pjId + " " + type);
+                        projectDaos.get(pjPosition).setPjStId(statusDaos.get(position).getStId());
                     }
                 }
 
