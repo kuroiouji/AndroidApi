@@ -2,9 +2,12 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:innerRadius="30dp"
     android:shape="ring"
-    android:thickness="5dp"
+    android:thickness="7dp"
     android:useLevel="false">
-
-    <solid android:color="#ff4081" />
+<gradient
+    android:endColor="#00e62c8c"
+    android:startColor="#ffe62c8c"
+    android:type="sweep"/>
+    <!--<solid android:color="#ff4081" />-->
 
 </shape>
