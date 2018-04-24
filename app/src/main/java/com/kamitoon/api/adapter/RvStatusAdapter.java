@@ -32,6 +32,8 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
     private Context mContext;
     String pjId;
     String type;
+    String stId;
+    int pjPosition;
 
     public RvStatusAdapter(List<ProjectDao> projectDaos, List<StatusDao> statusDaos, Context mContext) {
         this.projectDaos = projectDaos;
@@ -51,6 +53,7 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
 
     @Override
     public void onBindViewHolder(@NonNull RvStatusAdapter.ProjectDaoViewHolder holder, int position) {
+        pjPosition = position;
         holder.pj_name.setText(projectDaos.get(position).getPjName());
         holder.pj_code.setText(projectDaos.get(position).getPjCode());
         holder.pj_budget.setText(projectDaos.get(position).getPjSpend() + " บาท");
@@ -61,6 +64,7 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
         }
         pjId = projectDaos.get(position).getPjId();
         type = projectDaos.get(position).getType();
+        stId = projectDaos.get(position).getPjStId();
         if (statusDaos.size() > 0) {
             SpStatusAdapter adapter = new SpStatusAdapter(mContext, statusDaos, pjId, type);
             holder.spinner.setAdapter(adapter);
@@ -75,7 +79,9 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
             holder.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    Log.d("tg", "onItemSelected: " + position + " " + pjId + " " + type);
+                    if(!statusDaos.get(position).getStId().equals(stId)) {
+                        Log.d("tg", "onItemSelected: " + position + " " + pjId + " " + type);
+                    }
                 }
 
                 @Override
