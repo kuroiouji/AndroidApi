@@ -1,10 +1,19 @@
 package com.kamitoon.api;
 
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.kamitoon.api.adapter.RvStatusAdapter;
 import com.kamitoon.api.model.ProjectDao;
@@ -21,6 +30,8 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<StatusDao> status;
+    RvStatusAdapter adapter;
+    TextView pj_code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +39,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+
         recyclerView = findViewById(R.id.recyclerview_list);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         getSt();
         service();
+
+
+
     }
 
     public void service() {
@@ -44,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     List<ProjectDao> res = response.body();
                     Log.d("service", "if :: " + response.message());
-                    RvStatusAdapter adapter = new RvStatusAdapter(res, status, getApplicationContext());
+                    adapter = new RvStatusAdapter(res, status, getApplicationContext());
                     recyclerView.setAdapter(adapter);
                     for (ProjectDao row : res) {
                         Log.d("service", row.getPjName());
@@ -91,4 +106,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem search = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
+        search(searchView);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void search(SearchView searchView) {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Log.d("Error","text"+newText.toString());
+                adapter.getFilter().filter(newText);
+                return true;
+            }
+        });
+    }
+
 }

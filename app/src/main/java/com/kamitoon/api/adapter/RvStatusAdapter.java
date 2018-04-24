@@ -2,6 +2,9 @@ package com.kamitoon.api.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,15 +25,17 @@ import com.kamitoon.api.model.ActivityDao;
 import com.kamitoon.api.model.ProjectDao;
 import com.kamitoon.api.model.StatusDao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by computer on 23/4/2561.
  */
 
-public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.ProjectDaoViewHolder> {
+public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.ProjectDaoViewHolder> implements Filterable {
     private List<ProjectDao> projectDaos;
     private List<StatusDao> statusDaos;
+    private List<ProjectDao> mFilteredList;
     private Context mContext;
     String pjId;
     String type;
@@ -39,6 +46,7 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
         this.projectDaos = projectDaos;
         this.statusDaos = statusDaos;
         this.mContext = mContext;
+        this.mFilteredList = projectDaos;
     }
 
     @NonNull
@@ -54,8 +62,11 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
     @Override
     public void onBindViewHolder(@NonNull RvStatusAdapter.ProjectDaoViewHolder holder, int position) {
         pjPosition = position;
+
+
         holder.pj_name.setText(projectDaos.get(position).getPjName());
         holder.pj_code.setText(projectDaos.get(position).getPjCode());
+
         holder.pj_budget.setText(projectDaos.get(position).getPjSpend() + " บาท");
         if (projectDaos.get(position).getType().equals("project")) {
             holder.cardView.setCardBackgroundColor(Color.parseColor("#ffffff"));
@@ -80,7 +91,7 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if(!statusDaos.get(position).getStId().equals(stId)) {
-                        Log.d("tg", "onItemSelected: " + position + " " + pjId + " " + type);
+                        //Log.d("tg", "onItemSelected: " + position + " " + pjId + " " + type);
                         projectDaos.get(pjPosition).setPjStId(statusDaos.get(position).getStId());
                     }
                 }
@@ -96,7 +107,46 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
 
     @Override
     public int getItemCount() {
-        return projectDaos.size();
+        return mFilteredList.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+      return new Filter() {
+          @Override
+          protected FilterResults performFiltering(CharSequence constraint) {
+
+              String charstring = constraint.toString();
+            //  Log.d("constraint","text constraint === "+charstring);
+              if(charstring.isEmpty()){
+                  mFilteredList = projectDaos;
+              }else{
+                  ArrayList<ProjectDao> filteredList = new ArrayList<>();
+                  for(ProjectDao projectDao : projectDaos){
+                      if(projectDao.getPjName().toLowerCase().contains(charstring) || projectDao.getPjCode().toLowerCase().contains(charstring)
+                              || projectDao.getPjSpend().toLowerCase().contains(charstring)){
+                         // Log.d("Check","Text to => "+projectDao.getPjCode().toLowerCase().contains(charstring));
+                          filteredList.add(projectDao);
+
+                      }
+                  }
+                  mFilteredList = filteredList;
+                  //Log.d("filteredList","filteredList => "+mFilteredList.toString());
+              }
+              FilterResults filterResults = new FilterResults();
+              filterResults.values = mFilteredList;
+             // Log.d("result","result of text == "+filterResults.values);
+              return filterResults;
+          }
+
+          @Override
+          protected void publishResults(CharSequence constraint, FilterResults results) {
+
+                mFilteredList = (List<ProjectDao>)results.values;
+             // Log.d("result","result publiic => "+mFilteredList);
+                notifyDataSetChanged();
+          }
+      };
     }
 
     public class ProjectDaoViewHolder extends RecyclerView.ViewHolder {
@@ -105,6 +155,8 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
         TextView pj_budget;
         Spinner spinner;
         CardView cardView;
+        GradientDrawable drawable;
+
 
         public ProjectDaoViewHolder(View itemView) {
             super(itemView);
@@ -113,6 +165,9 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
             pj_code = (TextView) itemView.findViewById(R.id.pj_code);
             pj_budget = (TextView) itemView.findViewById(R.id.pj_budget);
             spinner = (Spinner) itemView.findViewById(R.id.pj_status);
+           
+
+
         }
     }
 }
