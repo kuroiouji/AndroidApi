@@ -67,7 +67,7 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
         holder.pj_name.setText(projectDaos.get(position).getPjName());
         holder.pj_code.setText(projectDaos.get(position).getPjCode());
         holder.pj_budget.setText(projectDaos.get(position).getPjSpend() + " บาท");
-       // holder.gradientDrawable.setColor(Color.GREEN);
+//
         if (projectDaos.get(position).getType().equals("project")) {
             holder.cardView.setCardBackgroundColor(Color.parseColor("#ffffff"));
         } else if (projectDaos.get(position).getType().equals("activity")) {
@@ -83,6 +83,7 @@ public class RvStatusAdapter extends RecyclerView.Adapter<RvStatusAdapter.Projec
             for (StatusDao st : statusDaos) {
                 if (st.getStId().equals(projectDaos.get(position).getPjStId())) {
                     holder.spinner.setSelection(ps);
+                    holder.gradientDrawable.setColor(Color.parseColor(st.getStColor()));
                     break;
                 }
                 ps++;
